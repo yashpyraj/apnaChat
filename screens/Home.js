@@ -1,13 +1,37 @@
 import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useLayoutEffect } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { Avatar } from 'native-base'
 import CustomListItem from '../components/CustomListItem'
 import { auth, db } from '../firebase'
 import { getAuth, signOut } from "firebase/auth";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { collection, getDocs } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 
 const Home = ({ navigation }) => {
+    const [chats, setChats] = useState([])
+
+
+    useEffect(() => {
+        const chatRef = collection(db, "chats")
+
+        const unsub = onSnapshot(chatRef, (snap) => {
+            let chats = []
+            snap.docs.forEach((doc) => {
+                chats.push({ ...doc.data(), id: doc.id })
+            })
+
+            console.log(chats)
+            setChats(chats)
+
+        })
+
+
+        return unsub
+    }, [])
+
+
 
 
 
